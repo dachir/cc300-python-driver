@@ -35,7 +35,7 @@ def get_device_state(device: CC300Device) -> Dict[str, str]:
         try:
             dt = datetime.strptime(data_parts[2], "%Y%m%d%H%M%S")
             result["TIME"] = dt.strftime("%Y-%m-%d %H:%M:%S +0100 WAT")
-        except:
+        except ValueError:
             result["TIME"] = data_parts[2]
         
         result["COUNTER"] = data_parts[3]
@@ -67,7 +67,7 @@ def get_tax_server_state(device: CC300Device) -> Dict[str, str]:
         try:
             dt = datetime.strptime(data_parts[2], "%Y%m%d%H%M%S")
             result["LastConnectionToServer"] = dt.strftime("%Y-%m-%d %H:%M:%S +0100 WAT")
-        except:
+        except ValueError:
             result["LastConnectionToServer"] = data_parts[2]
     
     return result
