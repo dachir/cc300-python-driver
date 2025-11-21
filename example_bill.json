@@ -1,0 +1,22 @@
+{
+  "seller_id": "SELLER123",
+  "seller_name": "Mon Magasin",
+  "vt": "FV",
+  "payments": [
+    {
+      "mode": "E",
+      "amount": 1000.0
+    }
+  ],
+  "products": [
+    {
+      "label": "Produit Test",
+      "tax": "B",
+      "price": 1000.0,
+      "items": 1.0
+    }
+  ],
+  "buyer_ifu": "1234567890",
+  "buyer_name": "Client Test",
+  "aib": "N/A"
+}

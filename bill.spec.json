@@ -1,0 +1,168 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {
+    "billCommon": {
+      "type": "object",
+      "properties": {
+        "seller_id": {
+          "description": "Numero (identifiant) du vendeur",
+          "type": "string"
+        },
+        "seller_name": {
+          "type": "string",
+          "maxLength": 30,
+          "description": "Nom du vendeur. Max 30 chars"
+        },
+        "buyer_ifu": {
+          "type": "string",
+          "description": "IFU de l'acheteur"
+        },
+        "buyer_name": {
+          "type": "string",
+          "description": "Nom de l'acheteur"
+        },
+        "aib": {
+          "type": "string",
+          "description": "AIB de l'achteur si applicable",
+          "enum": ["1%", "5%", "N/A"]
+        },
+        "payments": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/payment" },
+          "minItems": 1
+        },
+        "products": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/product" },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "seller_id",
+        "seller_name",
+        "payments",
+        "products"
+      ]
+    },
+    "payment": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "description": "Modes de paiement: \"V\" – virement;\n\"C\" – carte bancaire \"M\" – Mobile money \"D\" - chèques\n\"E\" - espèces (cash) \"A\" - autre",
+          "enum": ["V", "C", "M", "D", "E", "A"]
+        },
+        "amount": {
+          "type": "number",
+          "description": "Montant Payé"
+        }
+      },
+      "required": ["mode","amount"]
+    },
+    "product": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Libellé de l'article. Maximum 60 charactères",
+          "maxLength": 60
+        },
+        "bar_code": {
+          "type": "string",
+          "description": "Code Barre de l'article. Maximum 24 charactères",
+          "maxLength": 24
+        },
+        "tax": {
+          "type": "string",
+          "description": "taux d'imposition :\n▪ A = Exonéré\n▪ B = Taxable\n▪ C = Exportation de produits taxables\n▪ D = TVA régime d'exception\n▪ E = Régime fiscal TPS\n▪ F = Réservé, en cas de taxe de séjour, l'article doit être\nnommé \"TAXE DE SEJOUR\"",
+          "enum": ["A", "B", "C", "D", "E", "F"]
+        },
+        "price": {
+          "type": "number",
+          "description": "Prix avec TVA (sans Taxe Spécifique si applicable)"
+        },
+        "items": {
+          "type": "number",
+          "description": "Quantité . Par défaut, il s'agit d'une pièce (1.000). En cas de quantité décimale, utilisez le point décimal"
+        },
+        "specific_tax": {
+          "type": "number",
+          "description": "Taxe spécifique, montant total (pour la quantité totale de l'article) incluant TVA"
+        },
+        "specific_tax_desc": {
+          "type": "string",
+          "description": "Brève description de Taxe spécifique appliqué (si existante), maximum 16 caractères",
+          "maxLength": 16
+        },
+        "original_price": {
+          "type": "number",
+          "description": "Prix d'origine en cas de changement de prix"
+        },
+        "price_change_explanation": {
+          "type": "string",
+          "description": "Brève description du changement de prix (remise , augmentation), maximum 24 caractères",
+          "maxLength": 24
+        }
+      },
+      "required": ["label","tax", "price"]
+    }
+  },
+  "title": "Bill",
+  "description": "A Bill according to Benin Tax Sys",
+  "type": "object",
+  "oneOf": [
+    {
+      "allOf": [
+        {
+          "$ref": "#/definitions/billCommon"
+        },
+        {
+          "properties": {
+            "rt": {
+              "type": "string",
+              "description": "Type de facture d'avoir : FA = Facture d'avoir\nCA = Copie de la dernière facture d'avoir\nEA = Facture d'avoir à l'exportation\nER = Copie de la dernière Facture d'avoir à l'exportation",
+              "enum": [
+                "FA",
+                "CA",
+                "EA",
+                "ER"
+              ]
+            },
+            "rn": {
+              "type": "string",
+              "description": "Numéro de référence de la facture originale (obligatoire). La valeur doit être au format «NIM-TC» où :\n• NIM est le NIM de la machine sur laquelle la facture originale est émise\n• TC est la même que celle du champ TC de la facture de vente originale"
+            }
+          },
+          "required": [
+            "rt",
+            "rn"
+          ]
+        }
+      ]
+    },
+    {
+      "allOf": [
+        {
+          "$ref": "#/definitions/billCommon"
+        },
+        {
+          "properties": {
+            "vt": {
+              "type": "string",
+              "description": "Type de facture de vente:  FV = Facture de vente \nCV = Copie de la dernière Facture de vente \nEV = Facture de vente à l'exportation  \nEC= Copie de la dernière Facture de vente à l'exportation",
+              "enum": [
+                "FV",
+                "CV",
+                "EV",
+                "EC"
+              ]
+            }
+          },
+          "required": [
+            "vt"
+          ]
+        }
+      ]
+    }
+  ]
+}
