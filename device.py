@@ -186,12 +186,18 @@ class Device:
         # Handle SYN responses (command takes longer than 100ms)
         max_attempts = 50  # Wait up to 5 seconds
         for _ in range(max_attempts):
-            chunk = self.serial.read(256)
+            # Read one byte at a time to avoid overreading
+            chunk = self.serial.read(1)
             if chunk:
                 response_data += chunk
                 
-                # Check if we have a complete response
-                if ETX in chunk:
+                # Check if we have a complete response (ends with ETX)
+                if chunk[0] == ETX:
+                    break
+            
+            # If we have some data but no new bytes, check if we got ETX
+            if response_data and not chunk:
+                if ETX in response_data:
                     break
         
         response = Response(raw=response_data)

@@ -23,7 +23,7 @@
         },
         "aib": {
           "type": "string",
-          "description": "AIB de l'achteur si applicable",
+          "description": "AIB de l'acheteur si applicable",
           "enum": ["1%", "5%", "N/A"]
         },
         "payments": {
